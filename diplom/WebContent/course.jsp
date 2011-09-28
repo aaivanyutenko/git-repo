@@ -6,9 +6,9 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>Гомельский государственный университет имени Франциска Скорины</title>
-<link rel="stylesheet" type="text/css" href="http://<%=request.getServerName() + ":" + request.getServerPort()%>/ext-container/resources/css/ext-all.css" />
+<link rel="stylesheet" type="text/css" href="http://dev.sencha.com/deploy/ext-4.0.2a/resources/css/ext-all.css" />
 <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=MML_HTMLorMML"></script>
-<script type="text/javascript" src="http://<%=request.getServerName() + ":" + request.getServerPort()%>/ext-container/bootstrap.js"></script>
+<script type="text/javascript" src="http://dev.sencha.com/deploy/ext-4.0.2a/bootstrap.js"></script>
 <%Course course = CoursesManager.getCourseById(request.getParameter("courseId"));%>
 <script type="text/javascript">
 	Ext.onReady(function() {

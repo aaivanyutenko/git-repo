@@ -4,8 +4,8 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>Гомельский государственный университет имени Франциска Скорины</title>
-<link rel="stylesheet" type="text/css" href="http://ext-container/resources/css/ext-all.css" />
-<script type="text/javascript" src="http://ext-container/bootstrap.js"></script>
+<link rel="stylesheet" type="text/css" href="http://dev.sencha.com/deploy/ext-4.0.2a/resources/css/ext-all.css" />
+<script type="text/javascript" src="http://dev.sencha.com/deploy/ext-4.0.2a/bootstrap.js"></script>
 <script type="text/javascript">
 	Ext.onReady(function() {
 		var addCourseWindow = Ext.create('Ext.Window', {

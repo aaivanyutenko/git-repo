@@ -25,8 +25,9 @@ public class Login extends HttpServlet {
 		CoursesManager.setRealPath(getServletContext().getRealPath("courses"));
 		String username = request.getParameter("username");
 		String password = request.getParameter("password");
-		if (username != null && password != null && username.length() > 0 && password.length() > 0)
+		if (username != null && password != null && username.length() > 0 && password.length() > 0) {
 			request.getSession().setAttribute("user", new User(username, password));
+		}
 	}
 
 	private static final long serialVersionUID = 1L;

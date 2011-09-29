@@ -63,9 +63,9 @@ public class Course implements Serializable {
 	}
 
 	public String getJsonTree() {
-		StringBuffer jsonBuffer = new StringBuffer("[{'text':'Определения','fuck':'definition','expanded':true,'cls':'folder'");
+		StringBuffer jsonBuffer = new StringBuffer("[{\"text\":\"Определения\",\"cls\":\"folder\",\"expanded\":true,\"children\":[{\"text\":\"Thhhh\",\"leaf\":true}]");
 		createJsonTree(definitions, jsonBuffer);
-		jsonBuffer.append("}, {'text':'\u0422\u0435\u043E\u0440\u0435\u043C\u044B','fuck':'theorem','expanded':true,'cls':'folder'");
+		jsonBuffer.append("}, {\"text\":\"Теоремы\",\"cls\":\"folder\"");
 		createJsonTree(theorems, jsonBuffer);
 		jsonBuffer.append("}]");
 		return jsonBuffer.toString();

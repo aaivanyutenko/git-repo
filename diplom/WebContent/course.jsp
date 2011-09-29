@@ -75,8 +75,9 @@
 		var treePanel = Ext.create('Ext.tree.Panel', {
 			region : 'north',
 			id : 'tree',
-			rootVisible : false,
 			store : treeStore,
+			rootVisible: false,
+			height: 300,
 			bbar : [<%if (session.getAttribute("user") != null) {%>{
 				xtype : 'button',
 				text : 'Добавить',

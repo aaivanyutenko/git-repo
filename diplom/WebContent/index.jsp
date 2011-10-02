@@ -82,129 +82,127 @@
 			}
 		});
 		
-		Ext.create('Ext.container.Viewport', {
-			layout: 'border',
-			items: [{
-				region: 'center',
-				xtype: 'grid',
-				id: 'courses-grid',
-				store : store,
-				columns : [ {
-					text : 'Выберите курс:',
-					sortable : true,
-					width : window.innerWidth,
-					dataIndex : 'name'
-				} ],
-				bbar : {
-					xtype: 'form',
-					url: 'login',
-					padding: '6 0 0 7',
-					height: 38,
-					frame: true,
-					items: [{
+		Ext.create('Ext.grid.Panel', {
+			id: 'courses-grid',
+			store : store,
+			renderTo: Ext.getBody(),
+			height: 700,
+			enableColumnResize: false,
+			columns : [ {
+				text : 'Выберите курс:',
+				sortable : true,
+				flex: 1,
+				dataIndex : 'name'
+			} ],
+			bbar : {
+				xtype: 'form',
+				url: 'login',
+				padding: '6 0 0 7',
+				height: 38,
+				frame: true,
+				items: [{
+					xtype: 'container',
+					anchor: '100%',
+					layout:'column',
+					defaults: {
 						xtype: 'container',
-						anchor: '100%',
-						layout:'column',
-						defaults: {
-							xtype: 'container',
-							layout: 'anchor'
-						},
-						items:[
-							<%if (session.getAttribute("user") == null) {%>{
-								columnWidth: .1,
-								items: [{
-									xtype : 'textfield',
-									name : 'username',
-									emptyText : 'логин'
-								}]
-							}, {
-								columnWidth: .1,
-								items: [{
-									xtype : 'textfield',
-									name : 'password',
-									inputType : 'password',
-									emptyText : 'пароль'
-								}]
-							}, {
-								columnWidth: .1,
-								items: [{
-									xtype : 'button',
-									text : 'Авторизация',
-									handler : function() {
-										var form = this.up('form').getForm();
-										
-										form.submit({
-											success : function(response) {
-												location.reload();
-											}
-										});
-									}
-								}]
-							}<%} else {%>{
-								columnWidth: .06,
-								items: [{
-									xtype : 'button',
-									text : 'Добавить курс',
-									handler : function() {
-										addCourseWindow.show();
-									}
-								}]
-							},{
-								columnWidth: .08,
-								items: [{
-									xtype : 'button',
-									text : 'Редактировать курс',
-									handler : function() {
-										var form = document.getElementById('course');
-										form.input.value = Ext.getCmp('courses-grid').getSelectionModel().getSelection()[0].data.id;
-										form.submit();
-									}
-								}]
-							},{
-								columnWidth: .057,
-								items: [{
-									xtype : 'button',
-									text : 'Удалить курс',
-									handler : function() {
-										var courseId = Ext.getCmp('courses-grid').getSelectionModel().getSelection()[0].data.id;
-										Ext.Ajax.request({
-											url : 'delete-course',
-											params : {
-												courseId : courseId
-											},
-											success : function(response) {
-												store.load();
-											}
-										});
-									}
-								}]
-							},{
-								columnWidth: .1,
-								items: [{
-									xtype : 'button',
-									text : 'Выход',
-									handler : function() {
-										Ext.Ajax.request({
-											url : 'logout',
-											success : function(response) {
-												location.replace('index.jsp');
-											}
-										});
-									}
-								}]
-							}<%}%>]
-					}]
-				},
-				listeners : {
-					itemclick : function(view, record, item, index, event) {
-						<%if (session.getAttribute("user") == null) {%>
-							var form = document.getElementById('course');
-							form.input.value = record.data.id;
-							form.submit();
-						<%}%>
-					}
+						layout: 'anchor'
+					},
+					items:[
+						<%if (session.getAttribute("user") == null) {%>{
+							columnWidth: .1,
+							items: [{
+								xtype : 'textfield',
+								name : 'username',
+								emptyText : 'логин'
+							}]
+						}, {
+							columnWidth: .1,
+							items: [{
+								xtype : 'textfield',
+								name : 'password',
+								inputType : 'password',
+								emptyText : 'пароль'
+							}]
+						}, {
+							columnWidth: .1,
+							items: [{
+								xtype : 'button',
+								text : 'Авторизация',
+								handler : function() {
+									var form = this.up('form').getForm();
+									
+									form.submit({
+										success : function(response) {
+											location.reload();
+										}
+									});
+								}
+							}]
+						}<%} else {%>{
+							columnWidth: .06,
+							items: [{
+								xtype : 'button',
+								text : 'Добавить курс',
+								handler : function() {
+									addCourseWindow.show();
+								}
+							}]
+						},{
+							columnWidth: .08,
+							items: [{
+								xtype : 'button',
+								text : 'Редактировать курс',
+								handler : function() {
+									var form = document.getElementById('course');
+									form.input.value = Ext.getCmp('courses-grid').getSelectionModel().getSelection()[0].data.id;
+									form.submit();
+								}
+							}]
+						},{
+							columnWidth: .057,
+							items: [{
+								xtype : 'button',
+								text : 'Удалить курс',
+								handler : function() {
+									var courseId = Ext.getCmp('courses-grid').getSelectionModel().getSelection()[0].data.id;
+									Ext.Ajax.request({
+										url : 'delete-course',
+										params : {
+											courseId : courseId
+										},
+										success : function(response) {
+											store.load();
+										}
+									});
+								}
+							}]
+						},{
+							columnWidth: .1,
+							items: [{
+								xtype : 'button',
+								text : 'Выход',
+								handler : function() {
+									Ext.Ajax.request({
+										url : 'logout',
+										success : function(response) {
+											location.replace('index.jsp');
+										}
+									});
+								}
+							}]
+						}<%}%>]
+				}]
+			},
+			listeners : {
+				itemclick : function(view, record, item, index, event) {
+					<%if (session.getAttribute("user") == null) {%>
+						var form = document.getElementById('course');
+						form.input.value = record.data.id;
+						form.submit();
+					<%}%>
 				}
-			}]
+			}
 		});
 	});
 </script>

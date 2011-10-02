@@ -10,7 +10,7 @@ public class Definitions implements Serializable {
 	private String text = "Определения";
 	private boolean leaf = true;
 	private String cls = null;
-	private List<Definition> definitions = null;
+	private List<Item> definitions = null;
 	private String id = OwnConstants.DEFINITIONS_ROOT_ID;
 
 	public Definitions() {
@@ -41,11 +41,11 @@ public class Definitions implements Serializable {
 		this.cls = cls;
 	}
 
-	public List<Definition> getDefinitions() {
+	public List<Item> getDefinitions() {
 		return definitions;
 	}
 
-	public void setDefinitions(List<Definition> definitions) {
+	public void setDefinitions(List<Item> definitions) {
 		this.definitions = definitions;
 	}
 	

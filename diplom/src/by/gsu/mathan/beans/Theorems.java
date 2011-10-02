@@ -10,7 +10,7 @@ public class Theorems implements Serializable {
 	private String text = "Теоремы";
 	private boolean leaf = true;
 	private String cls = null;
-	private List<Theorem> theorems = null;
+	private List<Item> theorems = null;
 	private String id = OwnConstants.THEOREMS_ROOT_ID;
 	
 	public Theorems() {
@@ -41,11 +41,11 @@ public class Theorems implements Serializable {
 		this.cls = cls;
 	}
 
-	public List<Theorem> getTheorems() {
+	public List<Item> getTheorems() {
 		return theorems;
 	}
 
-	public void setTheorems(List<Theorem> theorems) {
+	public void setTheorems(List<Item> theorems) {
 		this.theorems = theorems;
 	}
 	

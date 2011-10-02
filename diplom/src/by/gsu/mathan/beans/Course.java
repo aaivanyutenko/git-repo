@@ -5,26 +5,27 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
+
+import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 
 public class Course implements Serializable {
 	private static final long serialVersionUID = 1L;
 	private String name;
 	private String id;
 	private File coursePath;
-	private List<Item> theorems;
-	private List<Item> definitions;
+	private Definitions definitions;
+	private Theorems theorems;
 
 	public Course() {
-		definitions = new ArrayList<Item>();
-		theorems = new ArrayList<Item>();
+		definitions = new Definitions();
+		theorems = new Theorems();
 	}
 
 	public Course(String name, String id, File coursePath) {
-		definitions = new ArrayList<Item>();
-		theorems = new ArrayList<Item>();
+		definitions = new Definitions();
+		theorems = new Theorems();
 		this.name = name;
 		this.id = id;
 		this.coursePath = coursePath;
@@ -63,15 +64,22 @@ public class Course implements Serializable {
 	}
 
 	public String getJsonTree() {
-		StringBuffer jsonBuffer = new StringBuffer("[{\"text\":\"Определения\",\"cls\":\"folder\",\"expanded\":true,\"children\":[{\"text\":\"Thhhh\",\"leaf\":true}]");
+		JsonArray array = new JsonArray();
+		Gson gson = new Gson();
+		JsonElement jsonDefinitions = gson.toJsonTree(definitions);
+		array.add(jsonDefinitions);
+		JsonElement jsonTheorems = gson.toJsonTree(theorems);
+		array.add(jsonTheorems);
+		/*StringBuffer jsonBuffer = new StringBuffer("[{\"text\":\"Определения\",\"cls\":\"folder\",\"expanded\":true,\"children\":[{\"text\":\"Thhhh\",\"leaf\":true}]");
 		createJsonTree(definitions, jsonBuffer);
 		jsonBuffer.append("}, {\"text\":\"Теоремы\",\"cls\":\"folder\"");
 		createJsonTree(theorems, jsonBuffer);
-		jsonBuffer.append("}]");
-		return jsonBuffer.toString();
+		jsonBuffer.append("}]");*/
+		String stringArray = array.toString();
+		return stringArray;
 	}
 
-	private void createJsonTree(List<Item> items, StringBuffer json) {
+	/*private void createJsonTree(List<Item> items, StringBuffer json) {
 		if (items.size() > 0) {
 			json.append(",'children':[");
 			Iterator<Item> iterator = items.iterator();
@@ -90,10 +98,10 @@ public class Course implements Serializable {
 
 			json.append("]");
 		}
-	}
+	}*/
 
 	public void addItem(Item item, String parentItemId) {
-		if ("definition".equals(parentItemId))
+		/*if ("definition".equals(parentItemId))
 			definitions.add(item);
 		else if ("theorem".equals(parentItemId)) {
 			theorems.add(item);
@@ -101,17 +109,17 @@ public class Course implements Serializable {
 			Item parentItem = getItem(parentItemId);
 			if (parentItem != null)
 				parentItem.getChildren().add(item);
-		}
+		}*/
 	}
 
 	public Item getItem(String id) {
-		Item item = null;
-		item = tryToFind(definitions, id);
-		item = tryToFind(theorems, id);
-		return item;
+		/*Item item = null;
+		item = tryToFind(definitions.getDefinitions(), id);
+		item = tryToFind(theorems, id);*/
+		return null;
 	}
 
-	private Item tryToFind(List<Item> list, String id) {
+	/*private Item tryToFind(List<Item> list, String id) {
 		Item item = null;
 		Iterator<Item> iterator = list.iterator();
 		while (iterator.hasNext()) {
@@ -127,7 +135,7 @@ public class Course implements Serializable {
 				break;
 		}
 		return item;
-	}
+	}*/
 
 	public String toString() {
 		return name;

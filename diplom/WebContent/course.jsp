@@ -1,3 +1,4 @@
+<%@page import="by.gsu.mathan.data.OwnConstants"%>
 <%@page import="by.gsu.mathan.data.CoursesManager"%>
 <%@page import="by.gsu.mathan.beans.Course"%>
 <%@page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
@@ -101,7 +102,9 @@
 				selectionchange : function(model, records) {
 					if (records[0] != null) {
 						var iframe = document.getElementById('dynamic-loaded-frame');
-						iframe.src = 'get-item?course_id=<%=course.getId()%>&item_id=' + records[0].raw.id;
+						if (records[0].raw.id != '<%=OwnConstants.DEFINITIONS_ROOT_ID%>' && records[0].raw.id != '<%=OwnConstants.THEOREMS_ROOT_ID%>') {
+							iframe.src = 'get-item?course_id=<%=course.getId()%>&item_id=' + records[0].raw.id;
+						}
 					}
 				}
 			}

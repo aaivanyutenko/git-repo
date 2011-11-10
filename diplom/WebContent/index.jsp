@@ -5,14 +5,19 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>Гомельский государственный университет имени Франциска Скорины</title>
-<link rel="stylesheet" type="text/css" href="http://dev.sencha.com/deploy/ext-4.0.2a/resources/css/ext-all.css" />
-<script type="text/javascript" src="http://dev.sencha.com/deploy/ext-4.0.2a/bootstrap.js"></script>
+<link rel="stylesheet" type="text/css" href="http://cdn.sencha.io/ext-4.0.7-gpl/resources/css/ext-all.css" />
+<script type="text/javascript" src="http://cdn.sencha.io/ext-4.0.7-gpl/bootstrap.js"></script>
 <script type="text/javascript">
 	var user = <%=session.getAttribute("user")%>;
 	
+	Ext.require([
+		'Ext.window.Window',
+		'Ext.data.ArrayStore'
+	]);
+	
 	Ext.onReady(function() {
 		var addCourseWindow = null;
-		addCourseWindow = Ext.create('Ext.Window', {
+		addCourseWindow = Ext.create('Ext.window.Window', {
 			title : 'Создание нового курса',
 			closable : false,
 			width : 400,
@@ -84,117 +89,65 @@
 			}
 		});
 		
-		/*Ext.create('Ext.grid.Panel', {
-			bbar : {
-				xtype: 'form',
-				url: 'login',
-				padding: '6 0 0 7',
-				height: 38,
-				frame: true,
-				items: [{
-					xtype: 'container',
-					anchor: '100%',
-					layout:'column',
-					defaults: {
-						xtype: 'container',
-						layout: 'anchor'
-					},
-					items:[
-						<%if (session.getAttribute("user") == null) {%>{
-							columnWidth: .1,
-							items: [{
-								xtype : 'textfield',
-								name : 'username',
-								emptyText : 'логин'
-							}]
-						}, {
-							columnWidth: .1,
-							items: [{
-								xtype : 'textfield',
-								name : 'password',
-								inputType : 'password',
-								emptyText : 'пароль'
-							}]
-						}, {
-							columnWidth: .1,
-							items: [{
-								xtype : 'button',
-								text : 'Авторизация',
-								handler : function() {
-									var form = this.up('form').getForm();
-									
-									form.submit({
-										success : function(response) {
-											location.reload();
-										}
-									});
-								}
-							}]
-						}<%} else {%>{
-							columnWidth: .06,
-							items: [{
-								xtype : 'button',
-								text : 'Добавить курс',
-								handler : function() {
-									addCourseWindow.show();
-								}
-							}]
-						},{
-							columnWidth: .08,
-							items: [{
-								xtype : 'button',
-								text : 'Редактировать курс',
-								handler : function() {
-									var form = document.getElementById('course');
-									form.input.value = Ext.getCmp('courses-grid').getSelectionModel().getSelection()[0].data.id;
-									form.submit();
-								}
-							}]
-						},{
-							columnWidth: .057,
-							items: [{
-								xtype : 'button',
-								text : 'Удалить курс',
-								handler : function() {
-									var courseId = Ext.getCmp('courses-grid').getSelectionModel().getSelection()[0].data.id;
-									Ext.Ajax.request({
-										url : 'delete-course',
-										params : {
-											courseId : courseId
-										},
-										success : function(response) {
-											store.load();
-										}
-									});
-								}
-							}]
-						},{
-							columnWidth: .1,
-							items: [{
-								xtype : 'button',
-								text : 'Выход',
-								handler : function() {
-									Ext.Ajax.request({
-										url : 'logout',
-										success : function(response) {
-											location.replace('index.jsp');
-										}
-									});
-								}
-							}]
-						}<%}%>]
-				}]
-			},
-			listeners : {
-				itemclick : function(view, record, item, index, event) {
-					<%if (session.getAttribute("user") == null) {%>
-						var form = document.getElementById('course');
-						form.input.value = record.data.id;
-						form.submit();
-					<%}%>
-				}
+		var gridListeners = null;
+		var mainWindowButtons = null;
+		<%if (session.getAttribute("user") == null) {%>
+		gridListeners = {
+			itemclick : function(view, record, item, index, event) {
+				var form = document.getElementById('course');
+				form.input.value = record.data.id;
+				form.submit();
 			}
-		});*/
+		};
+		mainWindowButtons = [{
+			text: 'Авторизация',
+			handler: function() {
+				authorizeWindow.show();
+			}
+		}];
+		<%} else {%>
+		mainWindowButtons = [{
+			text : 'Добавить курс',
+			handler : function() {
+				addCourseWindow.show();
+			}
+		}, {
+			text : 'Редактировать курс',
+			handler : function() {
+				var id = Ext.getCmp('course-grid').getSelectionModel().getSelection()[0].data.id;
+				location.replace('course.jsp?courseId=' + id);
+			}
+		}, {
+			text : 'Удалить курс',
+			handler : function() {
+				var course = Ext.getCmp('course-grid').getSelectionModel().getSelection()[0].data;
+				Ext.Msg.confirm('Внимание!', 'Вы действительно хотите удалить курс ' + course.name, function(btn) {
+					if (btn == 'yes'){
+						var courseId = course.id;
+						Ext.Ajax.request({
+							url : 'delete-course',
+							params : {
+								courseId : courseId
+							},
+							success : function(response) {
+								store.load();
+							}
+						});
+					}
+				});
+			}
+		}, {
+			text : 'Выход',
+			handler : function() {
+				Ext.Ajax.request({
+					url : 'logout',
+					success : function(response) {
+						location.replace('index.jsp');
+					}
+				});
+			}
+		}];
+		<%}%>
 		
 		var mainWindow = Ext.create('Ext.window.Window', {
 			closable: false,
@@ -202,10 +155,14 @@
 			draggable: false,
 			width: 600,
 			height: 400,
+			bodyStyle: {
+				'border': 0
+			},
 			layout: 'fit',
 			
 			items: [{
 				xtype: 'grid',
+				id: 'course-grid',
 				store : store,
 				enableColumnResize: false,
 				columns : [{
@@ -213,23 +170,10 @@
 					menuDisabled : true,
 					flex: 1,
 					dataIndex : 'name'
-				}]
-				<%if (session.getAttribute("user") == null) {%>,
-				listeners : {
-					itemclick : function(view, record, item, index, event) {
-						var form = document.getElementById('course');
-						form.input.value = record.data.id;
-						form.submit();
-					}
-				}
-				<%}%>
+				}],
+				listeners : gridListeners
 			}],
-			buttons: [{
-				text: 'Авторизация',
-				handler: function() {
-					authorizeWindow.show();
-				}
-			}]
+			buttons: mainWindowButtons
 		});
 		
 		mainWindow.show();

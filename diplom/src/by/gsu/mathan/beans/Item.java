@@ -11,21 +11,19 @@ import com.google.gson.annotations.Expose;
 
 public class Item implements Serializable {
 	private static final long serialVersionUID = 1L;
-	@Expose private String name;
+	@Expose private String text;
 	private String xml;
-	@Expose private String ownId;
-	@Expose private List<Item> children;
-
-	public Item() {
-		children = new ArrayList<Item>();
-	}
+	@Expose private String id;
+	@Expose private String cls = "file";
+	@Expose private boolean leaf = true;
+	@Expose private List<Item> children = new ArrayList<Item>();
 
 	public String getName() {
-		return name;
+		return text;
 	}
 
-	public void setName(String name) {
-		this.name = name;
+	public void setName(String text) {
+		this.text = text;
 	}
 
 	public String getXml() {
@@ -37,11 +35,27 @@ public class Item implements Serializable {
 	}
 
 	public String getId() {
-		return ownId;
+		return id;
 	}
 
 	public void setId(String id) {
-		this.ownId = id;
+		this.id = id;
+	}
+
+	public String getCls() {
+		return cls;
+	}
+
+	public void setCls(String cls) {
+		this.cls = cls;
+	}
+
+	public boolean isLeaf() {
+		return leaf;
+	}
+
+	public void setLeaf(boolean leaf) {
+		this.leaf = leaf;
 	}
 
 	public List<Item> getChildren() {
@@ -61,10 +75,19 @@ public class Item implements Serializable {
 	}
 
 	public String toString() {
-		return name;
+		return text;
 	}
 
 	public boolean hasChildren() {
 		return children.size() > 0;
+	}
+	
+	public void addItem(Item item) {
+		children.add(item);
+		
+		if (hasChildren()) {
+			setCls("folder");
+			setLeaf(false);
+		}
 	}
 }

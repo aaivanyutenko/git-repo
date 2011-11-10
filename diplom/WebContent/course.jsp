@@ -7,103 +7,112 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>Гомельский государственный университет имени Франциска Скорины</title>
-<link rel="stylesheet" type="text/css" href="http://dev.sencha.com/deploy/ext-4.0.2a/resources/css/ext-all.css" />
+<link rel="stylesheet" type="text/css" href="http://cdn.sencha.io/ext-4.0.7-gpl/resources/css/ext-all.css" />
 <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=MML_HTMLorMML"></script>
-<script type="text/javascript" src="http://dev.sencha.com/deploy/ext-4.0.2a/bootstrap.js"></script>
+<script type="text/javascript" src="http://cdn.sencha.io/ext-4.0.7-gpl/bootstrap.js"></script>
 <%Course course = CoursesManager.getCourseById(request.getParameter("courseId"));%>
 <script type="text/javascript">
 	Ext.onReady(function() {
 		var treeStore = Ext.create('Ext.data.TreeStore', {
-			proxy : {
-				type : 'ajax',
-				url : 'get-course-content?course_id=<%=course.getId()%>'
+			proxy: {
+				type: 'ajax',
+				url: 'get-course-content?course_id=<%=course.getId()%>'
 			}
 		});
 		
-		var addItemWindow = Ext.create('Ext.Window', {
+		var addItemWindow = null;
+		addItemWindow = Ext.create('Ext.Window', {
 			width: 400,
-			closable : false,
-			items : [{
-				xtype : 'form',
-				bodyPadding : 10,
-				frame : true,
-				fieldDefaults : {
-					labelWidth : 150
+			closable: false,
+			items: [{
+				xtype: 'form',
+				bodyPadding: 10,
+				frame: true,
+				fieldDefaults: {
+					labelWidth: 150
 				},
-				items : [{
-					xtype : 'displayfield',
-					id : 'parent-id',
-					fieldLabel : 'Родительский элемент'
+				items: [{
+					xtype: 'displayfield',
+					id: 'parent-id',
+					fieldLabel: 'Родительский элемент'
 				}, {
-					xtype : 'filefield',
-					id : 'docxFile',
-					fieldLabel : 'Укажите файл',
-					buttonText : 'Обзор'
+					xtype: 'filefield',
+					id: 'docxFile',
+					fieldLabel: 'Укажите файл',
+					buttonText: 'Обзор'
 				}, {
-					xtype : 'hidden',
-					name : 'courseId',
-					value : '<%=course.getId()%>'
+					xtype: 'hidden',
+					name: 'courseId',
+					value: '<%=course.getId()%>'
 				}],
-				buttons : [{
-					xtype : 'button',
-					text : 'Добавить',
-					handler : function() {
-						var fileField = Ext.getCmp('docxFile');
+				buttons: [{
+					xtype: 'button',
+					text: 'Добавить',
+					handler: function() {
 						var form = this.up('form').getForm();
 						if (form.isValid()) {
 							form.submit({
-								params : {
-									parentId : Ext.getCmp('tree').getSelectionModel().getSelection()[0].raw.ownId
+								params: {
+									parentId: Ext.getCmp('tree').getSelectionModel().getSelection()[0].raw.id
 								},
-								url : 'add-item',
-								waitMsg : 'Загрузка...',
-								success : function(fp, o) {
+								url: 'add-item',
+								waitMsg: 'Загрузка...',
+								success: function(fp, o) {
 								}
 							});
 						}
 						addItemWindow.hide();
 					}
 				}, {
-					xtype : 'button',
-					text : 'Отмена',
-					handler : function() {
+					xtype: 'button',
+					text: 'Отмена',
+					handler: function() {
 						addItemWindow.hide();
 					}
 				}]
 			}]
 		});
+		
+		var treePanelBbar = null;
+		<%if (session.getAttribute("user") != null) {%>
+		treePanelBbar = [{
+			xtype: 'button',
+			text: 'Добавить',
+			handler: function() {
+				var parent = Ext.getCmp('tree').getSelectionModel().getSelection()[0];
+				if (parent != null) {
+					var parentField = Ext.getCmp('parent-id');
+					parentField.setValue(parent.raw.text);
+					addItemWindow.show();
+				} else {
+					Ext.Msg.alert('Внимание!', 'Сначала выберите в дереве родительский элемент.');
+				}
+			}
+		}, {
+			xtype: 'button',
+			text: 'Удалить',
+			handler: function() {
+			}
+		}];
+		<%}%>
 
 		var treePanel = Ext.create('Ext.tree.Panel', {
-			region : 'north',
-			id : 'tree',
-			store : treeStore,
+			region: 'north',
+			id: 'tree',
+			border: 0,
+			bodyStyle: {
+				'border-top-width': 0
+			},
+			store: treeStore,
 			rootVisible: false,
-			height: 300,
-			bbar : [<%if (session.getAttribute("user") != null) {%>{
-				xtype : 'button',
-				text : 'Добавить',
-				handler : function() {
-					var parent = Ext.getCmp('tree').getSelectionModel().getSelection()[0];
-					if (parent != null) {
-						var parentField = Ext.getCmp('parent-id');
-						parentField.setValue(parent.raw.text);
-						addItemWindow.show();
-					} else {
-						Ext.Msg.alert('Внимание!', 'Сначала выберите в дереве родительский элемент.');
-					}
-				}
-			}, {
-				xtype : 'button',
-				text : 'Удалить',
-				handler : function() {
-				}
-			}<%}%>],
-			listeners : {
-				selectionchange : function(model, records) {
+			height: '100%',
+			bbar: treePanelBbar,
+			listeners: {
+				selectionchange: function(model, records) {
 					if (records[0] != null) {
 						var iframe = document.getElementById('dynamic-loaded-frame');
-						if (records[0].raw.ownId != '<%=OwnConstants.DEFINITIONS_ROOT_ID%>' && records[0].raw.ownId != '<%=OwnConstants.THEOREMS_ROOT_ID%>') {
-							iframe.src = 'get-item?course_id=<%=course.getId()%>&item_id=' + records[0].raw.ownId;
+						if (records[0].raw.id != <%="'" + OwnConstants.DEFINITIONS_ROOT_ID + "'"%> && records[0].raw.id != <%="'" + OwnConstants.THEOREMS_ROOT_ID + "'"%>) {
+							iframe.src = 'get-item?course_id=<%=course.getId()%>&item_id=' + records[0].raw.id;
 						}
 					}
 				}
@@ -111,36 +120,39 @@
 		});
 		
 		Ext.create('Ext.Viewport', {
-			layout : 'border',
-			items : [ {
-				xtype : 'box',
-				id : 'header',
-				region : 'north',
-				html : '<h1><%=course.getName()%></h1>'
+			layout: 'border',
+			items: [ {
+				xtype: 'box',
+				id: 'header',
+				region: 'north',
+				margins: '2 0 2 5',
+				html: '<h1><%=course.getName()%></h1>'
 			}, {
-				id : 'layout-border',
-				region : 'west',
-				margins : '2 0 5 5',
-				width : 475,
-				autoScroll : true,
-				items : [ treePanel ]
+				region: 'west',
+				margins: '2 0 5 5',
+				bodyStyle: {
+					'border-right-width': 0
+				},
+				width: 475,
+				autoScroll: true,
+				items: [ treePanel ]
 			}, {
-				id : 'content-panel',
-				region : 'center',
+				id: 'content-panel',
+				region: 'center',
 				html: '<iframe id="dynamic-loaded-frame" width="100%" height="100%" style="border: 0px;"></iframe>',
-				margins : '2 5 5 0'
+				margins: '2 5 5 0'
 			}, {
-				region : 'south',
-				xtype : 'toolbar',
-				items : [{
-					xtype : 'button',
-					text : 'Назад',
-					handler : function() {
+				region: 'south',
+				xtype: 'toolbar',
+				items: [{
+					xtype: 'button',
+					text: 'Назад',
+					handler: function() {
 						location.replace('index.jsp');
 					}
 				}]
 			} ],
-			renderTo : Ext.getBody()
+			renderTo: Ext.getBody()
 		});
 	});
 </script>

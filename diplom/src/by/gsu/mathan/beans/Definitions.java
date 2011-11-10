@@ -1,63 +1,50 @@
 package by.gsu.mathan.beans;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
+
+import com.google.gson.annotations.Expose;
 
 import by.gsu.mathan.data.OwnConstants;
 
 public class Definitions implements Serializable {
 	private static final long serialVersionUID = 1L;
-	private String text = "Определения";
-	private boolean leaf = true;
-	private String cls = null;
-	private List<Item> definitions = null;
-	private String id = OwnConstants.DEFINITIONS_ROOT_ID;
-
-	public Definitions() {
-
-	}
+	@Expose private final String text = "Определения";
+	@Expose private final String cls = "folder";
+	@Expose private final boolean expanded = true;
+	@Expose private final String id = OwnConstants.DEFINITIONS_ROOT_ID;
+	@Expose private List<Item> children = new ArrayList<>();
 
 	public String getText() {
 		return text;
 	}
 
-	public void setText(String text) {
-		this.text = text;
-	}
-
-	public boolean isLeaf() {
-		return leaf;
-	}
-
-	public void setLeaf(boolean leaf) {
-		this.leaf = leaf;
+	public boolean isExpanded() {
+		return expanded;
 	}
 
 	public String getCls() {
 		return cls;
 	}
 
-	public void setCls(String cls) {
-		this.cls = cls;
-	}
-
-	public List<Item> getDefinitions() {
-		return definitions;
-	}
-
-	public void setDefinitions(List<Item> definitions) {
-		this.definitions = definitions;
+	public List<Item> getChildren() {
+		return children;
 	}
 	
 	public String getId() {
 		return id;
 	}
 
-	public void setId(String id) {
-		this.id = id;
+	public void setChildren(List<Item> children) {
+		this.children = children;
 	}
-
+	
 	public String toString() {
-		return "Definitions [definitions=" + definitions + "]";
+		return "Definitions = " + children;
+	}
+	
+	public void add(Item item) {
+		children.add(item);
 	}
 }

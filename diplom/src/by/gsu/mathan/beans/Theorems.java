@@ -1,64 +1,54 @@
 package by.gsu.mathan.beans;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
+
+import com.google.gson.annotations.Expose;
 
 import by.gsu.mathan.data.OwnConstants;
 
 public class Theorems implements Serializable {
 	private static final long serialVersionUID = 1L;
-	private String text = "Теоремы";
-	private boolean leaf = true;
-	private String cls = null;
-	private List<Item> theorems = null;
-	private String id = OwnConstants.THEOREMS_ROOT_ID;
+	@Expose private final String text = "Теоремы";
+	@Expose private final String cls = "folder";
+	@Expose private final boolean expanded = true;
+	@Expose private final String id = OwnConstants.THEOREMS_ROOT_ID;
+	@Expose private List<Item> children = new ArrayList<>();
 	
 	public Theorems() {
-		
+		children = new ArrayList<>();
 	}
 
 	public String getText() {
 		return text;
 	}
 
-	public void setText(String text) {
-		this.text = text;
-	}
-
-	public boolean isLeaf() {
-		return leaf;
-	}
-
-	public void setLeaf(boolean leaf) {
-		this.leaf = leaf;
+	public boolean isExpanded() {
+		return expanded;
 	}
 
 	public String getCls() {
 		return cls;
-	}
-
-	public void setCls(String cls) {
-		this.cls = cls;
-	}
-
-	public List<Item> getTheorems() {
-		return theorems;
-	}
-
-	public void setTheorems(List<Item> theorems) {
-		this.theorems = theorems;
 	}
 	
 	public String getId() {
 		return id;
 	}
 
-	public void setId(String id) {
-		this.id = id;
+	public List<Item> getChildren() {
+		return children;
 	}
-
-	@Override
+	
+	public void setChildren(List<Item> children) {
+		this.children = children;
+	}
+	
 	public String toString() {
-		return "Theorems [theorems=" + theorems + "]";
+		return "Children = " + children;
+	}
+	
+	public void add(Item item) {
+		children.add(item);
 	}
 }

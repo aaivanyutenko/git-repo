@@ -53,7 +53,7 @@
 						if (form.isValid()) {
 							form.submit({
 								params : {
-									parentId : Ext.getCmp('tree').getSelectionModel().getSelection()[0].raw.id
+									parentId : Ext.getCmp('tree').getSelectionModel().getSelection()[0].raw.ownId
 								},
 								url : 'add-item',
 								waitMsg : 'Загрузка...',
@@ -102,8 +102,8 @@
 				selectionchange : function(model, records) {
 					if (records[0] != null) {
 						var iframe = document.getElementById('dynamic-loaded-frame');
-						if (records[0].raw.id != '<%=OwnConstants.DEFINITIONS_ROOT_ID%>' && records[0].raw.id != '<%=OwnConstants.THEOREMS_ROOT_ID%>') {
-							iframe.src = 'get-item?course_id=<%=course.getId()%>&item_id=' + records[0].raw.id;
+						if (records[0].raw.ownId != '<%=OwnConstants.DEFINITIONS_ROOT_ID%>' && records[0].raw.ownId != '<%=OwnConstants.THEOREMS_ROOT_ID%>') {
+							iframe.src = 'get-item?course_id=<%=course.getId()%>&item_id=' + records[0].raw.ownId;
 						}
 					}
 				}

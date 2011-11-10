@@ -1,3 +1,4 @@
+<%@page import="by.gsu.mathan.data.OwnConstants"%>
 <%@page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
@@ -7,8 +8,11 @@
 <link rel="stylesheet" type="text/css" href="http://dev.sencha.com/deploy/ext-4.0.2a/resources/css/ext-all.css" />
 <script type="text/javascript" src="http://dev.sencha.com/deploy/ext-4.0.2a/bootstrap.js"></script>
 <script type="text/javascript">
+	var user = <%=session.getAttribute("user")%>;
+	
 	Ext.onReady(function() {
-		var addCourseWindow = Ext.create('Ext.Window', {
+		var addCourseWindow = null;
+		addCourseWindow = Ext.create('Ext.Window', {
 			title : 'Создание нового курса',
 			closable : false,
 			width : 400,
@@ -68,32 +72,19 @@
 			fields : [ {
 				name : 'name',
 				type : 'string',
-				sortDir : 'ASC'
 			}, {
 				name : 'id'
 			} ],
 			proxy : {
 				type : 'ajax',
 				url : 'get-courses',
-				sortParam : 'name',
 				reader : {
 					type : 'array'
 				}
 			}
 		});
 		
-		Ext.create('Ext.grid.Panel', {
-			id: 'courses-grid',
-			store : store,
-			renderTo: Ext.getBody(),
-			height: 700,
-			enableColumnResize: false,
-			columns : [ {
-				text : 'Выберите курс:',
-				sortable : true,
-				flex: 1,
-				dataIndex : 'name'
-			} ],
+		/*Ext.create('Ext.grid.Panel', {
 			bbar : {
 				xtype: 'form',
 				url: 'login',
@@ -203,6 +194,94 @@
 					<%}%>
 				}
 			}
+		});*/
+		
+		var mainWindow = Ext.create('Ext.window.Window', {
+			closable: false,
+			resizable: false,
+			draggable: false,
+			width: 600,
+			height: 400,
+			layout: 'fit',
+			
+			items: [{
+				xtype: 'grid',
+				store : store,
+				enableColumnResize: false,
+				columns : [{
+					text : 'Выберите курс:',
+					menuDisabled : true,
+					flex: 1,
+					dataIndex : 'name'
+				}]
+				<%if (session.getAttribute("user") == null) {%>,
+				listeners : {
+					itemclick : function(view, record, item, index, event) {
+						var form = document.getElementById('course');
+						form.input.value = record.data.id;
+						form.submit();
+					}
+				}
+				<%}%>
+			}],
+			buttons: [{
+				text: 'Авторизация',
+				handler: function() {
+					authorizeWindow.show();
+				}
+			}]
+		});
+		
+		mainWindow.show();
+		
+		var authorizeWindow = null;
+		authorizeWindow = Ext.create('Ext.window.Window', {
+			width: 350,
+			height: 130,
+			layout: 'fit',
+			resizable: false,
+			closable: false,
+			
+			items: [{
+				xtype: 'form',
+				border: false,
+				url: 'login',
+				defaultType: 'textfield',
+				bodyPadding: 5,
+				
+				fieldDefaults: {
+					labelWidth: 125
+				},
+				
+				items: [{
+					fieldLabel: 'Имя пользователя',
+					name: '<%=OwnConstants.USER_NAME%>',
+					anchor: '100%'
+				}, {
+					inputType: 'password',
+					fieldLabel: 'Пароль',
+					name: '<%=OwnConstants.PASSWORD%>',
+					anchor: '100%'
+				}]
+			}],
+			
+			buttons: [{
+				text: 'Вход',
+				handler: function() {
+					var form = this.up('window').down('form');
+					
+					form.submit({
+						success: function(response) {
+							location.reload();
+						}
+					});
+				}
+			}, {
+				text: 'Отмена',
+				handler: function() {
+					authorizeWindow.hide();
+				}
+			}]
 		});
 	});
 </script>
@@ -211,5 +290,6 @@
 	<form id="course" action="course.jsp" method="post">
 		<input id="input" type="hidden" name="courseId">
 	</form>
+	<div id="courses-grid"></div>
 </body>
 </html>

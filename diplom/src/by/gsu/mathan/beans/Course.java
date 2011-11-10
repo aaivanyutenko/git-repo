@@ -6,7 +6,10 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 
+import by.gsu.mathan.data.OwnConstants;
+
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 
@@ -65,16 +68,11 @@ public class Course implements Serializable {
 
 	public String getJsonTree() {
 		JsonArray array = new JsonArray();
-		Gson gson = new Gson();
+		Gson gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
 		JsonElement jsonDefinitions = gson.toJsonTree(definitions);
 		array.add(jsonDefinitions);
 		JsonElement jsonTheorems = gson.toJsonTree(theorems);
 		array.add(jsonTheorems);
-		/*StringBuffer jsonBuffer = new StringBuffer("[{\"text\":\"Определения\",\"cls\":\"folder\",\"expanded\":true,\"children\":[{\"text\":\"Thhhh\",\"leaf\":true}]");
-		createJsonTree(definitions, jsonBuffer);
-		jsonBuffer.append("}, {\"text\":\"Теоремы\",\"cls\":\"folder\"");
-		createJsonTree(theorems, jsonBuffer);
-		jsonBuffer.append("}]");*/
 		String stringArray = array.toString();
 		return stringArray;
 	}
@@ -101,15 +99,16 @@ public class Course implements Serializable {
 	}*/
 
 	public void addItem(Item item, String parentItemId) {
-		/*if ("definition".equals(parentItemId))
+		if (OwnConstants.DEFINITIONS_ROOT_ID.equals(parentItemId)) {
 			definitions.add(item);
-		else if ("theorem".equals(parentItemId)) {
+		} else if (OwnConstants.THEOREMS_ROOT_ID.equals(parentItemId)) {
 			theorems.add(item);
 		} else {
 			Item parentItem = getItem(parentItemId);
-			if (parentItem != null)
+			if (parentItem != null) {
 				parentItem.getChildren().add(item);
-		}*/
+			}
+		}
 	}
 
 	public Item getItem(String id) {

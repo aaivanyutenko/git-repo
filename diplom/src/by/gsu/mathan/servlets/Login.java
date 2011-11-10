@@ -7,8 +7,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import by.gsu.mathan.beans.User;
 import by.gsu.mathan.data.CoursesManager;
+import static by.gsu.mathan.utils.StringHandler.isEmpty;
 
 @WebServlet("/login")
 public class Login extends HttpServlet {
@@ -25,8 +25,8 @@ public class Login extends HttpServlet {
 		CoursesManager.setRealPath(getServletContext().getRealPath("courses"));
 		String username = request.getParameter("username");
 		String password = request.getParameter("password");
-		if (username != null && password != null && username.length() > 0 && password.length() > 0) {
-			request.getSession().setAttribute("user", new User(username, password));
+		if (!isEmpty(username) && !isEmpty(password)) {
+			request.getSession().setAttribute("user", "'any_user_name'");
 		}
 	}
 

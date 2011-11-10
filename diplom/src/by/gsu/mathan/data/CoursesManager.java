@@ -158,8 +158,9 @@ public class CoursesManager {
 	}
 
 	public static Course getCourseById(String id) {
-		Map<String, Course> courses = getCoursesCash();
-		return (Course) courses.get(id);
+		/*Map<String, Course> courses = getCoursesCash();
+		return (Course) courses.get(id);*/
+		return new Course("Math", "123", new File("c:\\ff"));
 	}
 
 	private static void updateCourse(Course course) {

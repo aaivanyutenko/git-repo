@@ -7,12 +7,14 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.google.gson.annotations.Expose;
+
 public class Item implements Serializable {
 	private static final long serialVersionUID = 1L;
-	private String name;
+	@Expose private String name;
 	private String xml;
-	private String id;
-	private List<Item> children;
+	@Expose private String ownId;
+	@Expose private List<Item> children;
 
 	public Item() {
 		children = new ArrayList<Item>();
@@ -35,11 +37,11 @@ public class Item implements Serializable {
 	}
 
 	public String getId() {
-		return id;
+		return ownId;
 	}
 
 	public void setId(String id) {
-		this.id = id;
+		this.ownId = id;
 	}
 
 	public List<Item> getChildren() {

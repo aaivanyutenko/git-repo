@@ -5,8 +5,10 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>Гомельский государственный университет имени Франциска Скорины</title>
-<link rel="stylesheet" type="text/css" href="http://cdn.sencha.io/ext-4.0.7-gpl/resources/css/ext-all.css" />
-<script type="text/javascript" src="http://cdn.sencha.io/ext-4.0.7-gpl/bootstrap.js"></script>
+<!-- <link rel="stylesheet" type="text/css" href="http://cdn.sencha.io/ext-4.0.7-gpl/resources/css/ext-all.css" />
+<script type="text/javascript" src="http://cdn.sencha.io/ext-4.0.7-gpl/bootstrap.js"></script> -->
+<link rel="stylesheet" type="text/css" href="http://ext.by/resources/css/ext-all.css" />
+<script type="text/javascript" src="http://ext.by/bootstrap.js"></script>
 <script type="text/javascript">
 	var user = <%=session.getAttribute("user")%>;
 	
@@ -18,25 +20,25 @@
 	Ext.onReady(function() {
 		var addCourseWindow = null;
 		addCourseWindow = Ext.create('Ext.window.Window', {
-			title : 'Создание нового курса',
-			closable : false,
-			width : 400,
-			items : [{
-				xtype : 'form',
-				id : 'courseNameForm',
-				bodyPadding : 10,
-				frame : true,
-				items : [{
+			title: 'Создание нового курса',
+			closable: false,
+			width: 400,
+			items: [{
+				xtype: 'form',
+				id: 'courseNameForm',
+				bodyPadding: 10,
+				frame: true,
+				items: [{
 					xtype: 'textfield',
-					id : 'courseName',
-					fieldLabel : 'Название курса',
-					name : 'courseName',
-					allowBlank : false
+					id: 'courseName',
+					fieldLabel: 'Название курса',
+					name: 'courseName',
+					allowBlank: false
 				}],
-				buttons : [ {
-					xtype : 'button',
-					text : 'Добавить',
-					handler : function() {
+				buttons: [ {
+					xtype: 'button',
+					text: 'Добавить',
+					handler: function() {
 						var items = store.data.items;
 						var add = true;
 						var courseName = Ext.getCmp('courseName').value;
@@ -52,20 +54,20 @@
 							addCourseWindow.hide();
 							this.up('form').getForm().reset();
 							Ext.Ajax.request({
-								url : 'add-course',
-								params : {
-									courseName : courseName
+								url: 'add-course',
+								params: {
+									courseName: courseName
 								},
-								success : function(response) {
+								success: function(response) {
 									store.load();
 								}
 							});
 						}
 					}
 				}, {
-					xtype : 'button',
-					text : 'Отмена',
-					handler : function() {
+					xtype: 'button',
+					text: 'Отмена',
+					handler: function() {
 						addCourseWindow.hide();
 					}
 				}]
@@ -73,18 +75,18 @@
 		});
 		
 		var store = Ext.create('Ext.data.ArrayStore', {
-			autoLoad : true,
-			fields : [ {
-				name : 'name',
-				type : 'string',
+			autoLoad: true,
+			fields: [ {
+				name: 'name',
+				type: 'string',
 			}, {
-				name : 'id'
+				name: 'id'
 			} ],
-			proxy : {
-				type : 'ajax',
-				url : 'get-courses',
-				reader : {
-					type : 'array'
+			proxy: {
+				type: 'ajax',
+				url: 'get-courses',
+				reader: {
+					type: 'array'
 				}
 			}
 		});
@@ -93,10 +95,8 @@
 		var mainWindowButtons = null;
 		<%if (session.getAttribute("user") == null) {%>
 		gridListeners = {
-			itemclick : function(view, record, item, index, event) {
-				var form = document.getElementById('course');
-				form.input.value = record.data.id;
-				form.submit();
+			itemclick: function(view, record, item, index, event) {
+				location.replace('course.jsp?courseId=' + record.data.id);
 			}
 		};
 		mainWindowButtons = [{
@@ -107,29 +107,29 @@
 		}];
 		<%} else {%>
 		mainWindowButtons = [{
-			text : 'Добавить курс',
-			handler : function() {
+			text: 'Добавить курс',
+			handler: function() {
 				addCourseWindow.show();
 			}
 		}, {
-			text : 'Редактировать курс',
-			handler : function() {
+			text: 'Редактировать курс',
+			handler: function() {
 				var id = Ext.getCmp('course-grid').getSelectionModel().getSelection()[0].data.id;
 				location.replace('course.jsp?courseId=' + id);
 			}
 		}, {
-			text : 'Удалить курс',
-			handler : function() {
+			text: 'Удалить курс',
+			handler: function() {
 				var course = Ext.getCmp('course-grid').getSelectionModel().getSelection()[0].data;
 				Ext.Msg.confirm('Внимание!', 'Вы действительно хотите удалить курс ' + course.name, function(btn) {
 					if (btn == 'yes'){
 						var courseId = course.id;
 						Ext.Ajax.request({
-							url : 'delete-course',
-							params : {
-								courseId : courseId
+							url: 'delete-course',
+							params: {
+								courseId: courseId
 							},
-							success : function(response) {
+							success: function(response) {
 								store.load();
 							}
 						});
@@ -137,11 +137,11 @@
 				});
 			}
 		}, {
-			text : 'Выход',
-			handler : function() {
+			text: 'Выход',
+			handler: function() {
 				Ext.Ajax.request({
-					url : 'logout',
-					success : function(response) {
+					url: 'logout',
+					success: function(response) {
 						location.replace('index.jsp');
 					}
 				});
@@ -163,15 +163,15 @@
 			items: [{
 				xtype: 'grid',
 				id: 'course-grid',
-				store : store,
+				store: store,
 				enableColumnResize: false,
-				columns : [{
-					text : 'Выберите курс:',
-					menuDisabled : true,
+				columns: [{
+					text: 'Выберите курс:',
+					menuDisabled: true,
 					flex: 1,
-					dataIndex : 'name'
+					dataIndex: 'name'
 				}],
-				listeners : gridListeners
+				listeners: gridListeners
 			}],
 			buttons: mainWindowButtons
 		});

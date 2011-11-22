@@ -7,9 +7,9 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>Гомельский государственный университет имени Франциска Скорины</title>
-<link rel="stylesheet" type="text/css" href="http://cdn.sencha.io/ext-4.0.7-gpl/resources/css/ext-all.css" />
-<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=MML_HTMLorMML"></script>
-<script type="text/javascript" src="http://cdn.sencha.io/ext-4.0.7-gpl/bootstrap.js"></script>
+<link rel="stylesheet" type="text/css" href="http://ext.by/resources/css/ext-all.css" />
+<script type="text/javascript" src="http://ext.by/bootstrap.js"></script>
+<script type="text/javascript" src="http://mathjax.by/MathJax.js?config=MML_HTMLorMML"></script>
 <%Course course = CoursesManager.getCourseById(request.getParameter("courseId"));%>
 <script type="text/javascript">
 	Ext.onReady(function() {
@@ -33,7 +33,7 @@
 				},
 				items: [{
 					xtype: 'displayfield',
-					id: 'parent-id',
+					id: 'parent-name',
 					fieldLabel: 'Родительский элемент'
 				}, {
 					xtype: 'filefield',
@@ -58,6 +58,7 @@
 								url: 'add-item',
 								waitMsg: 'Загрузка...',
 								success: function(fp, o) {
+									treeStore.load();
 								}
 							});
 						}
@@ -81,8 +82,9 @@
 			handler: function() {
 				var parent = Ext.getCmp('tree').getSelectionModel().getSelection()[0];
 				if (parent != null) {
-					var parentField = Ext.getCmp('parent-id');
-					parentField.setValue(parent.raw.text);
+					parent = parent.raw;
+					var parentField = Ext.getCmp('parent-name');
+					parentField.setValue(parent.text);
 					addItemWindow.show();
 				} else {
 					Ext.Msg.alert('Внимание!', 'Сначала выберите в дереве родительский элемент.');
@@ -92,6 +94,32 @@
 			xtype: 'button',
 			text: 'Удалить',
 			handler: function() {
+				var node = Ext.getCmp('tree').getSelectionModel().getSelection()[0];
+				if (node != null) {
+					node = node.raw;
+					var msg = 'Вы действительно хотите удалить узел «' + node.text + '»?';
+					
+					if (node.expanded) {
+						msg = 'Узел «' + node.text + '» не пустой. Вы действительно хотите удалить этот узел?';
+					}
+					
+					Ext.Msg.confirm('Внимание!', msg, function(btn) {
+						if (btn == 'yes'){
+							Ext.Ajax.request({
+								url: 'delete-item',
+								params: {
+									itemId: node.id,
+									courseId: '<%=course.getId()%>'
+								},
+								success: function(response) {
+									treeStore.load();
+								}
+							});
+						}
+					});
+				} else {
+					Ext.Msg.alert('Внимание!', 'Сначала выберите в дереве элемент для удаления.');
+				}
 			}
 		}];
 		<%}%>
@@ -158,8 +186,5 @@
 </script>
 </head>
 <body>
-	<form id="course-form" action="course.jsp" method="post">
-		<input id="input" type="hidden" name="courseId">
-	</form>
 </body>
 </html>

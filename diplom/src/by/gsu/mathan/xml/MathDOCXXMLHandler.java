@@ -50,7 +50,7 @@ public class MathDOCXXMLHandler extends DefaultHandler {
 		try {
 			builderFactory = DocumentBuilderFactory.newInstance();
 			builder = builderFactory.newDocumentBuilder();
-			String documentText = (new StringBuilder("<html><head><title>")).append(title).append("</title><meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\"></meta><script type=\"text/javascript\" src=\"http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=MML_HTMLorMML\"></script></head><body><div style=\"text-align: justify;\"></div></body></html>").toString();
+			String documentText = (new StringBuilder("<html><head><title>")).append(title).append("</title><meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\"></meta><script type=\"text/javascript\" src=\"http://mathjax.by/MathJax.js?config=MML_HTMLorMML\"></script></head><body><div style=\"text-align: justify;\"></div></body></html>").toString();
 			document = builder.parse(new InputSource(new StringReader(documentText)));
 			transformerFactory = TransformerFactory.newInstance();
 			transformer = transformerFactory.newTransformer();
@@ -241,7 +241,7 @@ public class MathDOCXXMLHandler extends DefaultHandler {
 	}
 
 	private String parseText(String source) {
-		return source.replaceAll("<", "__").replaceAll(">", "_").replaceAll("([A-Za-z\u03A6\u03BE\u03B5]+)", "<mi>$1</mi>").replaceAll("([-+=\uFFFD'\u2208,\u2260\u2200\u2203:\u2264\u27F9\u2026])", "<mo>$1</mo>").replaceAll("(\\d)", "<mn>$1</mn>").replaceAll("(\\s)", "<mtext>&#x205F;&#x200A;</mtext>").replaceAll("__", "<mo>&lt;</mo>").replaceAll("_", "<mo>&gt;</mo>");
+		return source.replaceAll("<", "__").replaceAll(">", "_").replaceAll("([A-Za-zα-ωΑ-Ω]+)", "<mi>$1</mi>").replaceAll("([±∞=≠~×÷!∝≪≫≤≥∓≅≈≡∀∁∂√∛∜∪∩∅%°℉℃∆∇∃∄∈∋←↑→↓↔∴+-¬*∙⋮⋯⋰⋱ℵℶ∎])", "<mo>$1</mo>").replaceAll("(\\d)", "<mn>$1</mn>").replaceAll("(\\s)", "<mtext>&#x205F;&#x200A;</mtext>").replaceAll("__", "<mo>&lt;</mo>").replaceAll("_", "<mo>&gt;</mo>");
 	}
 
 	public String toString() {

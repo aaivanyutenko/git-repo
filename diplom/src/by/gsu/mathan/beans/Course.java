@@ -5,6 +5,8 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
+import java.util.Iterator;
+import java.util.List;
 
 import by.gsu.mathan.data.OwnConstants;
 
@@ -77,27 +79,6 @@ public class Course implements Serializable {
 		return stringArray;
 	}
 
-	/*private void createJsonTree(List<Item> items, StringBuffer json) {
-		if (items.size() > 0) {
-			json.append(",'children':[");
-			Iterator<Item> iterator = items.iterator();
-			for (int i = 1; iterator.hasNext(); i++) {
-				Item item = (Item) iterator.next();
-				String itemName = item.getName();
-				json.append((new StringBuilder(String.valueOf(i != 1 ? ",{'text':'" : "{'text':'"))).append(itemName).append("','fuck':'").append(item.getId()).append("'").toString());
-				if (item.getChildren().size() > 0) {
-					json.append(",'cls':'folder','expanded':true");
-					createJsonTree(item.getChildren(), json);
-					json.append("}");
-				} else {
-					json.append(",'cls':'file','leaf':true}");
-				}
-			}
-
-			json.append("]");
-		}
-	}*/
-
 	public void addItem(Item item, String parentItemId) {
 		if (OwnConstants.DEFINITIONS_ROOT_ID.equals(parentItemId)) {
 			definitions.add(item);
@@ -106,19 +87,24 @@ public class Course implements Serializable {
 		} else {
 			Item parentItem = getItem(parentItemId);
 			if (parentItem != null) {
-				parentItem.getChildren().add(item);
+				parentItem.add(item);
 			}
 		}
 	}
-
-	public Item getItem(String id) {
-		/*Item item = null;
-		item = tryToFind(definitions.getDefinitions(), id);
-		item = tryToFind(theorems, id);*/
-		return null;
+	
+	public void deleteItem(String itemId) {
+		definitions.delete(itemId);
+		theorems.delete(itemId);
 	}
 
-	/*private Item tryToFind(List<Item> list, String id) {
+	public Item getItem(String id) {
+		Item item = null;
+		item = tryToFind(definitions.getChildren(), id);
+		item = tryToFind(theorems.getChildren(), id);
+		return item;
+	}
+
+	private Item tryToFind(List<Item> list, String id) {
 		Item item = null;
 		Iterator<Item> iterator = list.iterator();
 		while (iterator.hasNext()) {
@@ -134,7 +120,7 @@ public class Course implements Serializable {
 				break;
 		}
 		return item;
-	}*/
+	}
 
 	public String toString() {
 		return name;

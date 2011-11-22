@@ -2,6 +2,7 @@ package by.gsu.mathan.beans;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import com.google.gson.annotations.Expose;
@@ -28,14 +29,14 @@ public class Definitions implements Serializable {
 		return cls;
 	}
 
+	public String getId() {
+		return id;
+	}
+	
 	public List<Item> getChildren() {
 		return children;
 	}
 	
-	public String getId() {
-		return id;
-	}
-
 	public void setChildren(List<Item> children) {
 		this.children = children;
 	}
@@ -46,5 +47,26 @@ public class Definitions implements Serializable {
 	
 	public void add(Item item) {
 		children.add(item);
+	}
+	
+	public void delete(String itemId) {
+		deleteItem(itemId, children);
+	}
+	
+	private void deleteItem(String itemId, List<Item> items) {
+		Iterator<Item> iterator = items.iterator();
+		
+		while (iterator.hasNext()) {
+			Item item = (Item) iterator.next();
+			
+			if (itemId.equals(item.getId())) {
+				items.remove(item);
+				return;
+			} else {
+				if (item.hasChildren()) {
+					deleteItem(itemId, item.getChildren());
+				}
+			}
+		}
 	}
 }

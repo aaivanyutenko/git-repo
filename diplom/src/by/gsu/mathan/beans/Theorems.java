@@ -2,6 +2,7 @@ package by.gsu.mathan.beans;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import com.google.gson.annotations.Expose;
@@ -50,5 +51,26 @@ public class Theorems implements Serializable {
 	
 	public void add(Item item) {
 		children.add(item);
+	}
+	
+	public void delete(String itemId) {
+		deleteItem(itemId, children);
+	}
+	
+	private void deleteItem(String itemId, List<Item> items) {
+		Iterator<Item> iterator = items.iterator();
+		
+		while (iterator.hasNext()) {
+			Item item = (Item) iterator.next();
+			
+			if (itemId.equals(item.getId())) {
+				items.remove(item);
+				return;
+			} else {
+				if (item.hasChildren()) {
+					deleteItem(itemId, item.getChildren());
+				}
+			}
+		}
 	}
 }

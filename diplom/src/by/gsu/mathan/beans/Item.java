@@ -16,6 +16,7 @@ public class Item implements Serializable {
 	@Expose private String id;
 	@Expose private String cls = "file";
 	@Expose private boolean leaf = true;
+	@Expose private boolean expanded = false;
 	@Expose private List<Item> children = new ArrayList<Item>();
 
 	public String getName() {
@@ -57,6 +58,14 @@ public class Item implements Serializable {
 	public void setLeaf(boolean leaf) {
 		this.leaf = leaf;
 	}
+	
+	public boolean isExpanded() {
+		return expanded;
+	}
+	
+	public void setExpanded(boolean expanded) {
+		this.expanded = expanded;
+	}
 
 	public List<Item> getChildren() {
 		return children;
@@ -82,12 +91,13 @@ public class Item implements Serializable {
 		return children.size() > 0;
 	}
 	
-	public void addItem(Item item) {
+	public void add(Item item) {
 		children.add(item);
 		
 		if (hasChildren()) {
 			setCls("folder");
 			setLeaf(false);
+			setExpanded(true);
 		}
 	}
 }
